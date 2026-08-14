@@ -352,13 +352,77 @@
       width: 100%;
       max-width: var(--form-max);
       margin: 0 auto;
-      line-height: 0;
+      line-height: 1.2;
     }
 
-    .promo-mobile img {
+    .promo-mobile {
       display: block;
-      width: 100%;
-      height: auto;
+    }
+
+    .promo-desktop {
+      display: none;
+    }
+
+    .promo-box {
+      background: linear-gradient(135deg, #3a1478, #5822b4);
+      padding: 2rem;
+      text-align: center;
+      border-radius: 12px;
+      color: white;
+      margin: 0 auto;
+      max-width: 564px;
+      box-shadow: 0 4px 20px rgba(88, 34, 180, 0.3);
+    }
+
+    .promo-box h2 {
+      color: white;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .promo-box p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.2rem;
+    }
+
+    .promo-box-desktop {
+      background: linear-gradient(135deg, #3a1478, #5822b4);
+      padding: 3rem;
+      text-align: center;
+      border-radius: 12px;
+      color: white;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(88, 34, 180, 0.3);
+    }
+
+    .promo-box-desktop h2 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .promo-box-desktop p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .promo-btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: white;
+      color: #5822b4;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: default;
     }
 
     .pm-kicker,
@@ -488,7 +552,9 @@
         min-height: 100%;
       }
 
-      .promo-mobile { display: none; }
+      .promo-mobile {
+        display: none;
+      }
 
       .promo-desktop {
         display: block;
@@ -500,14 +566,12 @@
         background: #3a1478;
       }
 
-      .promo-desktop img {
-        display: block;
-        position: absolute;
-        inset: 0;
-        width: 100%;
+      .promo-desktop .promo-box-desktop {
+        min-height: 640px;
         height: 100%;
-        object-fit: cover;
-        object-position: center top;
+        border-radius: 0;
+        margin: 0;
+        max-width: 100%;
       }
 
       .pd-kicker,
@@ -644,10 +708,17 @@
 
       <aside class="promo-aside" aria-label="Xfinity Mobile offer">
         <div class="ad-block promo-mobile">
-          <img src="promo-mobile.png?v=5" alt="Let's cut your mobile bill in half. Cut your mobile bill in half.">
+          <div class="promo-box">
+            <h2>Let's cut your mobile bill in half</h2>
+            <p>Cut your mobile bill in half</p>
+          </div>
         </div>
         <div class="promo-desktop">
-          <img src="promo-desktop.png" alt="Let’s cut your mobile bill in half">
+          <div class="promo-box-desktop">
+            <h2>Let's cut your mobile bill in half</h2>
+            <p>Plus, only Xfinity Mobile Plus plan includes device protection for life and phone upgrades every year.</p>
+            <span class="promo-btn">Calculate savings</span>
+          </div>
           <span class="calc" aria-hidden="true">Calculate savings</span>
         </div>
       </aside>
