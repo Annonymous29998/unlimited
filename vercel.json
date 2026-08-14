@@ -2,14 +2,16 @@
   "version": 2,
   "routes": [
     {
+      "src": "/mobile.png",
+      "dest": "/mobile.png"
+    },
+    {
+      "src": "/desktop.png",
+      "dest": "/desktop.png"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ],
   "headers": [
